@@ -1,0 +1,31 @@
+.simulationForm {
+    font-size: 0.6em;
+    display: flex;
+}
+
+.simulationForm .formItem {
+    display: flex;
+    flex-direction: column;
+    min-width: 60px;
+}
+
+.simulationForm .formItem * {
+    
+}
+
+.simulationForm input[type=text] {
+    width: 100%;
+}
+
+.simulationForm input[type=button] {
+    height: 70%;
+}
+
+.simulationForm input {
+    border: 1px solid black;
+}
+
+.simulationForm select {
+    border: 1px solid black;
+}
+

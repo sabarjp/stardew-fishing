@@ -36,3 +36,86 @@
     transform: rotate(360deg);
   }
 }
+
+label {display: inline;}
+
+.silver {
+  color: rgb(207, 202, 209)
+}
+
+.gold {
+  color: rgb(235, 202, 15);
+}
+
+.iridium {
+  color: rgb(165, 23, 221);
+}
+
+.logEntry {
+  display: flex;
+}
+
+.logEntry * {
+  padding: 0px 4px;
+}
+
+.Item-Icon {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  background-size: contain;
+  display: flex;
+}
+
+.Gold-Icon {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  background-size: contain;
+}
+
+.Quality-Icon {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  background-size: contain;
+  align-self: flex-end;
+  margin: 2px;
+}
+
+.Silver-Quality-Image {
+  background-image: url(./img/Silver\ Quality.png);
+}
+
+.Gold-Quality-Image {
+  background-image: url(./img/Gold\ Quality.png);
+}
+
+.Iridium-Quality-Image {
+  background-image: url(./img/Iridium\ Quality.png);
+}
+
+.Gold-Image {
+  background-image: url(./img/Gold.png);
+}
+
+.Largemouth-Bass-Image {
+  background-image: url(./img/Largemouth\ Bass.png);
+}
+
+.Carp-Image {
+  background-image: url(./img/Carp.png);
+}
+
+.Chub-Image {
+  background-image: url(./img/Chub.png);
+}
+
+.Green-Algae-Image {
+  background-image: url(./img/Green\ Algae.png);
+}
