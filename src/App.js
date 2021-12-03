@@ -8,6 +8,7 @@ import {convertXpToLevel} from './CalcTools';
 import SimulationForm from './SimulationForm';
 import FishingLog from './FishingLog';
 import './App.css';
+import FishingSummary from './FishingSummary';
 
 function App() {
   // inputs
@@ -58,10 +59,16 @@ function App() {
           setKeptFish={setKeptFish}
         />
 
-        <FishingLog 
+        <FishingSummary
+          fish={keptFish}
+        />
+
+        
+        {/**<FishingLog 
           fishingLog={fishingLog}
           keptFish={keptFish}
-        />
+        />*/}
+        
 
         <p>Lvl/Xp: {convertXpToLevel(endingFishXp)}/{Math.round(endingFishXp)}</p>
         <p>Time in day: {timeInDay}</p>
