@@ -72,6 +72,13 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       // regain energy if needed
       if (liveEnergy < energyCost && caughtFishes.length > 0) {
         const fishToEatNdx = findHighestEnergyPerGold(caughtFishes);
+
+        if (fishToEatNdx === -1) {
+          // nothing to eat, can't fish anymore!
+          timeToSimulate = 0;
+          break;
+        }
+
         const fishToEat = caughtFishes.splice(fishToEatNdx, 1)[0];
         const energyGain = determineEnergyHealth(fishToEat.baseEnergy, fishToEat.quality);
         liveEnergy += energyGain;
@@ -118,12 +125,20 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       // ...create spawn set
       let spawns = [];
       for (let fish of Fish) {
-        // check for proper location, weather, and season
-        if ((fishingArea & fish.location) && (weather & fish.weather) && (season & fish.seasons)) {
-          // check for proper time
-          if ((dayEnd - timeToSimulate) >= fish.minTime && (dayEnd - timeToSimulate) <= fish.maxTime) {
-            // this is a possible spawn
-            spawns.push(fish);
+        // check for ability to catch (training rod + not adv fish, required level)
+        if (((usingTrainingRod && !fish.advanced) || !usingTrainingRod) && fishingLevel >= fish.requiredLevel) {
+          // check for proper location, weather, and season
+          if ((fishingArea & fish.location) && (weather & fish.weather) && (season & fish.seasons)) {
+            // check for proper time
+            for (let i=0; i<fish.time.length; i=i+2) {
+              let minTime = fish.time[i];
+              let maxTime = fish.time[i+1];
+              if ((dayEnd - (timeToSimulate/0.6)) >= minTime && (dayEnd - (timeToSimulate/0.6)) <= maxTime) {
+                // this is a possible spawn
+                spawns.push(fish);
+                break;
+              }
+            }
           }
         }
       }
@@ -132,18 +147,17 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       spawns = shuffleArray(spawns);
 
       // ...skill check against each possible spawn
-      let caughtFish = {name: "Trash", difficulty: 0};
+      let caughtFish = {name: "Trash", difficulty: 0, quality: Quality.NONE, baseValue: 0};
       for (let fish of spawns) {
         let odds = Math.min(0.90, fish.spawnMultiplier - Math.max(0, fish.bestDepth - castDepth) * fish.depthMultiplier * fish.spawnMultiplier + (fishingLevel / 50));
         if (Math.random() < odds) {
-          caughtFish = fish;
+          caughtFish = {...fish};
           break;
         }
       }
 
       // ...determine quality
       let fishQuality = determineBaseFishQuality(fishingLevel, castDepth);
-      debugger;
       // ...modify quality
       if (fishingTackle === Tackle.QUALITY_BOBBER) {
         fishQuality = upgradeQuality(fishQuality);
@@ -156,7 +170,7 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       }
 
       // ...downgrade quality for special cases, i.e. training rod and garbage
-      if (caughtFish.name === "Trash" || caughtFish.name === "Green Algae" || caughtFish.name === "Seaweed")
+      if (["Trash", "Green Algae", "White Algae", "Seaweed"].includes(caughtFish.name))
         fishQuality = Quality.NORMAL;
       if (usingTrainingRod)
         fishQuality = Quality.NORMAL;
