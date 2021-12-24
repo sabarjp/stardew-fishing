@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import Fish from './Fish';
-import Locations from './Locations';
+import {baseLocations} from './Locations';
 import Weather from './Weather';
 import Seasons from './Seasons';
 import Baits from './Baits';
@@ -14,7 +14,8 @@ import './SimulationForm.css';
 function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, setTimeInDay,
     startingFishXp, setStartingFishXp, fishingArea, setFishingArea, season, setSeason, weather, setWeather,
     fishingTackle, setFishingTackle, fishingBait, setFishingBait, startingEnergy, setStartingEnergy,
-    usingTrainingRod, setUsingTrainingRod, setEndingFishXp, setFishingLog, setKeptFish }) {
+    usingTrainingRod, setUsingTrainingRod, setEndingFishXp, setFishingLog, setKeptFish, 
+    catchLegendaryFish, setCatchLegendaryFish, extendedFamilyQuestActive, setExtendedFamilyQuestActive }) {
 
     useEffect(() => {
       const updateTimeInDay = () => {
@@ -27,6 +28,14 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
 
   const onTrainingRodChanged = (e) => {
     setUsingTrainingRod(e.target.checked);
+  }
+
+  const onCatchLegendaryChanged = (e) => {
+    setCatchLegendaryFish(e.target.checked);
+  }
+
+  const onExtendedFamilyActiveChanged = (e) => {
+    setExtendedFamilyQuestActive(e.target.checked);
   }
 
   const onStartingEnergyChanged = (e) => {
@@ -63,6 +72,7 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
     let liveEnergy = startingEnergy;
     let caughtFishes = [];
     let newFishingLog = [];
+    let caughtLegendaryFish = {};
 
     while(timeToSimulate > 0) {
       let fishingLevel = convertXpToLevel(liveFishingXp);
@@ -72,6 +82,13 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       // regain energy if needed
       if (liveEnergy < energyCost && caughtFishes.length > 0) {
         const fishToEatNdx = findHighestEnergyPerGold(caughtFishes);
+
+        if (fishToEatNdx === -1) {
+          // nothing to eat, can't fish anymore!
+          timeToSimulate = 0;
+          break;
+        }
+
         const fishToEat = caughtFishes.splice(fishToEatNdx, 1)[0];
         const energyGain = determineEnergyHealth(fishToEat.baseEnergy, fishToEat.quality);
         liveEnergy += energyGain;
@@ -118,12 +135,37 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       // ...create spawn set
       let spawns = [];
       for (let fish of Fish) {
-        // check for proper location, weather, and season
-        if ((fishingArea & fish.location) && (weather & fish.weather) && (season & fish.seasons)) {
-          // check for proper time
-          if ((dayEnd - timeToSimulate) >= fish.minTime && (dayEnd - timeToSimulate) <= fish.maxTime) {
-            // this is a possible spawn
-            spawns.push(fish);
+        // exclude legendary fish already caught
+        if (caughtLegendaryFish[fish.id]) {
+          continue;
+        }
+        // exclude legendary fish if not looking for them
+        if (!catchLegendaryFish && fish.legendary) {
+          continue;
+        }
+        // excluded extended legendary fish if not looking for them
+        if (!extendedFamilyQuestActive && fish.extendedFamily) {
+          continue;
+        }
+
+        // check for ability to catch (training rod + not adv fish, required level)
+        if (((usingTrainingRod && fish.difficulty < 50) || !usingTrainingRod) && fishingLevel >= fish.requiredLevel) {
+          // check for proper location, weather
+          // TODO: special case for night market
+          if ((fishingArea & fish.location) && (weather & fish.weather)) {
+            // now check for season, unless its ginger island or the night market
+            if ((fishingArea & (baseLocations.GINGER_ISLAND | baseLocations.NIGHT_MARKET)) || (season & fish.seasons)) {
+              // check for proper time
+              for (let i=0; i<fish.time.length; i=i+2) {
+                let minTime = fish.time[i];
+                let maxTime = fish.time[i+1];
+                if ((dayEnd - (timeToSimulate/0.6)) >= minTime && (dayEnd - (timeToSimulate/0.6)) <= maxTime) {
+                  // this is a possible spawn
+                  spawns.push(fish);
+                  break;
+                }
+              }
+            }
           }
         }
       }
@@ -132,18 +174,21 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       spawns = shuffleArray(spawns);
 
       // ...skill check against each possible spawn
-      let caughtFish = {name: "Trash", difficulty: 0};
+      let caughtFish = {name: "Trash", difficulty: 0, quality: Quality.NONE, baseValue: 0};
       for (let fish of spawns) {
         let odds = Math.min(0.90, fish.spawnMultiplier - Math.max(0, fish.bestDepth - castDepth) * fish.depthMultiplier * fish.spawnMultiplier + (fishingLevel / 50));
         if (Math.random() < odds) {
-          caughtFish = fish;
+          caughtFish = {...fish};
+          // keep legendary fish out of future spawn pools
+          if (fish.legendary) {
+            caughtLegendaryFish[caughtFish.id] = true;
+          }
           break;
         }
       }
 
       // ...determine quality
       let fishQuality = determineBaseFishQuality(fishingLevel, castDepth);
-      debugger;
       // ...modify quality
       if (fishingTackle === Tackle.QUALITY_BOBBER) {
         fishQuality = upgradeQuality(fishQuality);
@@ -156,7 +201,7 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       }
 
       // ...downgrade quality for special cases, i.e. training rod and garbage
-      if (caughtFish.name === "Trash" || caughtFish.name === "Green Algae" || caughtFish.name === "Seaweed")
+      if (["Trash", "Green Algae", "White Algae", "Seaweed"].includes(caughtFish.name))
         fishQuality = Quality.NORMAL;
       if (usingTrainingRod)
         fishQuality = Quality.NORMAL;
@@ -189,6 +234,7 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
     setEndingFishXp(liveFishingXp);
   };
 
+  // TODO: add tooltips to fields and fish
   return (
     <div className="simulationForm">
       <div className="formItem">
@@ -219,7 +265,7 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       <div className="formItem">
         <label htmlFor="locationSelect">Location</label>
         <select id="locationSelect" onChange={ e => setFishingArea(e.target.value) }>
-          {Object.entries(Locations).map(
+          {Object.entries(baseLocations).map(
             ([key, value]) => <option value={value}>{key}</option>
           )}
         </select>
@@ -251,6 +297,14 @@ function SimulationForm({ dayStart, setDayStart, dayEnd, setDayEnd, timeInDay, s
       <div className="formItem">
         <label htmlFor="trainingRod">T. rod?</label>
         <input id="trainingRod" type="checkbox" onChange={onTrainingRodChanged} checked={usingTrainingRod}/>
+      </div>
+      <div className="formItem">
+        <label htmlFor="catchLegendary">Legendary?</label>
+        <input id="catchLegendary" type="checkbox" onChange={onCatchLegendaryChanged} checked={catchLegendaryFish}/>
+      </div>
+      <div className="formItem">
+        <label htmlFor="extendedFamily">Extended family?</label>
+        <input id="extendedFamily" type="checkbox" onChange={onExtendedFamilyActiveChanged} checked={extendedFamilyQuestActive}/>
       </div>
       <div className="formItem">
         <input type="button" value="Simulate" onClick={onSimulate}/>

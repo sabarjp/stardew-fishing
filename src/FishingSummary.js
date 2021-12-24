@@ -15,7 +15,7 @@ function FishingSummary({ fish }) {
       qualityIndicator = <span className="Iridium-Quality-Image Quality-Icon"></span>
 
     return (
-      <div className={`${fish.name.replace(" ", "-")}-Image Item-Icon`}>
+      <div className={`${fish.name.replaceAll(" ", "-").replaceAll(".","")}-Image Item-Icon`}>
         {qualityIndicator}
       </div>
     )

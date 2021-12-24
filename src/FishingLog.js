@@ -17,7 +17,7 @@ function FishingLog({ fishingLog, keptFish }) {
     return (
       <div>
         {fish.name}
-        <div className={`${fish.name.replace(" ", "-")}-Image Item-Icon`}>
+        <div className={`${fish.name.replaceAll(" ", "-").replaceAll(".","")}-Image Item-Icon`}>
           {qualityIndicator}
         </div>
       </div>

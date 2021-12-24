@@ -202,7 +202,7 @@ export const convertXpToLevel = (xp) => {
 
   /**
    * Returns the index of the fish in the passed in array with the highest 
-   * energy per gold. 
+   * energy per gold. Returns -1 if no fish is found.
    */
   export const findHighestEnergyPerGold = (fishes) => {
     const epgFishes = fishes
@@ -216,5 +216,7 @@ export const convertXpToLevel = (xp) => {
       })
       .filter((fish) => fish.name !== "Trash")
       .sort((a, b) => b.epg - a.epg)
-    return epgFishes[0].index;
+    if (epgFishes.length > 0)
+      return epgFishes[0].index;
+    return -1;
   }
