@@ -112,6 +112,10 @@ label {display: inline;}
   background-image: url(./img/Anchovy.png);
 }
 
+.Angler-Image {
+  background-image: url(./img/Angler.png);
+}
+
 .Blobfish-Image {
   background-image: url(./img/Blobfish.png);
 }
@@ -140,8 +144,16 @@ label {display: inline;}
   background-image: url(./img/Carp.png);
 }
 
+.Catfish-Image {
+  background-image: url(./img/Catfish.png);
+}
+
 .Chub-Image {
   background-image: url(./img/Chub.png);
+}
+
+.Crimsonfish-Image {
+  background-image: url(./img/Crimsonfish.png);
 }
 
 .Dorado-Image {
@@ -162,6 +174,14 @@ label {display: inline;}
 
 .Ghostfish-Image {
   background-image: url(./img/Ghostfish.png);
+}
+
+.Glacierfish-Jr-Image {
+  background-image: url(./img/Glacierfish\ Jr.png);
+}
+
+.Glacierfish-Image {
+  background-image: url(./img/Glacierfish.png);
 }
 
 .Green-Algae-Image {
@@ -192,6 +212,14 @@ label {display: inline;}
   background-image: url(./img/Lava\ Eel.png);
 }
 
+.Legend-II-Image {
+  background-image: url(./img/Legend\ II.png);
+}
+
+.Legend-Image {
+  background-image: url(./img/Legend.png);
+}
+
 .Lingcod-Image {
   background-image: url(./img/Lingcod.png);
 }
@@ -208,6 +236,14 @@ label {display: inline;}
   background-image: url(./img/Midnight\ Squid.png);
 }
 
+.Ms-Angler-Image {
+  background-image: url(./img/Ms\ Angler.png);
+}
+
+.Mutant-Carp-Image {
+  background-image: url(./img/Mutant\ Carp.png);
+}
+
 .Octopus-Image {
   background-image: url(./img/Octopus.png);
 }
@@ -222,6 +258,10 @@ label {display: inline;}
 
 .Pufferfish-Image {
   background-image: url(./img/Pufferfish.png);
+}
+
+.Radioactive-Carp-Image {
+  background-image: url(./img/Radioactive\ Carp.png);
 }
 
 .Rainbow-Trout-Image {
@@ -274,6 +314,10 @@ label {display: inline;}
 
 .Soggy-Newspaper-Image {
   background-image: url(./img/Soggy\ Newspaper.png);
+}
+
+.Son-of-Crimsonfish-Image {
+  background-image: url(./img/Son\ of\ Crimsonfish.png);
 }
 
 .Spook-Fish-Image {

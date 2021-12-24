@@ -23,6 +23,8 @@ function App() {
   const [fishingBait, setFishingBait] = useState(Baits.NONE);
   const [startingEnergy, setStartingEnergy] = useState(270);
   const [usingTrainingRod, setUsingTrainingRod] = useState(false);
+  const [catchLegendaryFish, setCatchLegendaryFish] = useState(false);
+  const [extendedFamilyQuestActive, setExtendedFamilyQuestActive] = useState(false);
   // outputs
   const [endingFishXp, setEndingFishXp] = useState(0);
   const [fishingLog, setFishingLog] = useState([]);
@@ -57,6 +59,10 @@ function App() {
           setEndingFishXp={setEndingFishXp}
           setFishingLog={setFishingLog}
           setKeptFish={setKeptFish}
+          catchLegendaryFish={catchLegendaryFish}
+          setCatchLegendaryFish={setCatchLegendaryFish}
+          extendedFamilyQuestActive={extendedFamilyQuestActive}
+          setExtendedFamilyQuestActive={setExtendedFamilyQuestActive}
         />
 
         <FishingSummary
