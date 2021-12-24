@@ -47,6 +47,7 @@ function SimulationForm({
 	setCatchLegendaryFish,
 	extendedFamilyQuestActive,
 	setExtendedFamilyQuestActive,
+	pauseGame,
 }) {
 	useEffect(() => {
 		const updateTimeInDay = () => {
@@ -119,7 +120,7 @@ function SimulationForm({
 				const fishToEat = caughtFishes.splice(fishToEatNdx, 1)[0];
 				const energyGain = determineEnergyHealth(
 					fishToEat.baseEnergy,
-					fishToEat.quality,
+					fishToEat.quality
 				);
 				liveEnergy += energyGain;
 				timeToSimulate -= 1;
@@ -228,7 +229,7 @@ function SimulationForm({
 						Math.max(0, fish.bestDepth - castDepth) *
 							fish.depthMultiplier *
 							fish.spawnMultiplier +
-						fishingLevel / 50,
+						fishingLevel / 50
 				);
 				if (Math.random() < odds) {
 					caughtFish = { ...fish };
@@ -239,6 +240,9 @@ function SimulationForm({
 					break;
 				}
 			}
+
+			// if not paused, determine how long to fight the fish
+			// TODO: calculate fish fighting time
 
 			// ...determine quality
 			let fishQuality = determineBaseFishQuality(fishingLevel, castDepth);
@@ -255,11 +259,12 @@ function SimulationForm({
 			if (perfectCatch) {
 				fishQuality = upgradeQuality(fishQuality);
 			}
+			// TODO: quality lure increase
 
 			// ...downgrade quality for special cases, i.e. training rod and garbage
 			if (
 				['Trash', 'Green Algae', 'White Algae', 'Seaweed'].includes(
-					caughtFish.name,
+					caughtFish.name
 				)
 			)
 				fishQuality = Quality.NORMAL;
