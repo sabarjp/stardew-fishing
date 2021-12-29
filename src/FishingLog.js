@@ -96,4 +96,9 @@ function FishingLog({ fishingLog, keptFish }) {
 	);
 }
 
+FishingLog.propTypes = {
+  fishingLog: PropTypes.array,
+  keptFish: PropTypes.array,
+};
+
 export default FishingLog;

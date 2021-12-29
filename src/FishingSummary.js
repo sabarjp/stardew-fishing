@@ -102,4 +102,8 @@ function FishingSummary({ fish }) {
 	);
 }
 
+FishingSummary.propTypes = {
+  fish: PropTypes.array,
+};
+
 export default FishingSummary;
