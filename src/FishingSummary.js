@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Quality from './Quality';
 import { determineValue } from './CalcTools';
-import './FishingSummary.css';
+// import './FishingSummary.css';
+import 'twin.macro';
+import 'styled-components/macro';
 
 function FishingSummary({ fish }) {
 	const [stackableFish, setStackableFish] = useState([]);
@@ -77,11 +79,11 @@ function FishingSummary({ fish }) {
 
 	return (
 		<div className='fishingSummary'>
-			<h1>Fishing Summary:</h1>
-			<div className='summaryGrid'>
+			<h1 tw=''>Fishing Summary:</h1>
+			<div tw='flex'>
 				{stackableFish.map((stackableFish, ndx) => {
 					return (
-						<div className='summaryEntry' key={ndx}>
+						<div tw='text-blue-800 bg-red-50 border-4' key={ndx}>
 							<div>{prettyFormatFish(stackableFish)}</div>
 							{/* <div>{prettyFormatGold(determineValue(fish.baseValue, fish.quality))}</div> */}
 						</div>
