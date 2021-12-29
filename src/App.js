@@ -9,6 +9,8 @@ import SimulationForm from './SimulationForm';
 import FishingLog from './FishingLog';
 import './App.css';
 import FishingSummary from './FishingSummary';
+import 'twin.macro';
+import 'styled-components/macro';
 
 function App() {
 	// inputs
